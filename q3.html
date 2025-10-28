@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Booking Portal</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      scroll-behavior: smooth;
+    }
+
+    header {
+      background: linear-gradient(135deg, #007bff, #00bcd4);
+      color: white;
+      text-align: center;
+      padding: 40px 10px;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+
+    .destination-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+      overflow: hidden;
+    }
+
+    .destination-card:hover {
+      transform: scale(1.05);
+    }
+
+    .destination-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .card-body {
+      text-align: center;
+    }
+
+    footer {
+      background-color: #212529;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 20px; font-size: 14px; }
+      .destination-card img { height: 150px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <h1>🌍 Explore the World with Ease</h1>
+    <p>Book your dream destination effortlessly</p>
+  </header>
+
+  <!-- SEARCH SECTION -->
+  <section id="search" class="container mt-5">
+    <h2 class="text-center mb-4">Search Your Destination</h2>
+    <form id="bookingForm" class="row g-3 justify-content-center">
+
+      <div class="col-md-4">
+        <label class="form-label">Destination</label>
+        <input type="text" id="destinationInput" name="destination" class="form-control" list="destinations" placeholder="Enter city" autocomplete="on" required>
+        <datalist id="destinations">
+          <option value="Paris">
+          <option value="Tokyo">
+          <option value="New York">
+          <option value="Sydney">
+          <option value="Dubai">
+        </datalist>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Travel Date</label>
+        <input type="date" id="travelDate" class="form-control" required>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Budget Range ($)</label>
+        <input type="range" id="budget" class="form-range" min="500" max="5000" step="100">
+        <small class="text-muted" id="budgetValue">Budget: $2750</small>
+      </div>
+
+      <div class="col-md-2 align-self-end">
+        <button type="submit" class="btn btn-primary w-100">Search</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- DESTINATION CARDS -->
+  <section id="destinationsSection" class="container mt-5">
+    <h2 class="text-center mb-4">Popular Destinations</h2>
+    <div class="row g-4" id="destinationCards">
+      <div class="col-md-4 destination-card" data-name="Paris">
+        <img src="https://source.unsplash.com/600x400/?paris,eiffel" alt="Paris">
+        <div class="card-body">
+          <h4>Paris <span class="badge bg-info">Top Pick</span></h4>
+          <p>The city of lights and romance.</p>
+          <button class="btn btn-outline-primary book-btn" data-destination="Paris">Book Now</button>
+        </div>
+      </div>
+
+      <div class="col-md-4 destination-card" data-name="Tokyo">
+        <img src="https://source.unsplash.com/600x400/?tokyo,japan" alt="Tokyo">
+        <div class="card-body">
+          <h4>Tokyo</h4>
+          <p>Experience the future and tradition together.</p>
+          <button class="btn btn-outline-primary book-btn" data-destination="Tokyo">Book Now</button>
+        </div>
+      </div>
+
+      <div class="col-md-4 destination-card" data-name="Sydney">
+        <img src="https://source.unsplash.com/600x400/?sydney,australia" alt="Sydney">
+        <div class="card-body">
+          <h4>Sydney</h4>
+          <p>Enjoy beaches, opera, and adventure.</p>
+          <button class="btn btn-outline-primary book-btn" data-destination="Sydney">Book Now</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING MODAL -->
+  <div class="modal fade" id="bookingModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Confirm Your Booking</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Destination:</strong> <span id="selectedDestination"></span></p>
+          <p><strong>Date:</strong> <span id="selectedDate"></span></p>
+          <p><strong>Budget:</strong> <span id="selectedBudget"></span></p>
+          <p>Do you want to confirm your booking?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" id="confirmBooking">Yes, Confirm</button>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 TravelEase. All rights reserved.</p>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- JavaScript & jQuery Logic -->
+  <script>
+    // Update budget label dynamically
+    $('#budget').on('input', function() {
+      $('#budgetValue').text('Budget: $' + $(this).val());
+    });
+
+    // Form validation
+    $('#bookingForm').on('submit', function(e) {
+      e.preventDefault();
+      const dest = $('#destinationInput').val().trim();
+      const date = $('#travelDate').val();
+      if (!dest || !date) {
+        alert('Please fill all required fields!');
+        return;
+      }
+      $('html, body').animate({ scrollTop: $('#destinationsSection').offset().top }, 700);
+    });
+
+    // Filter destinations based on search
+    $('#destinationInput').on('input', function() {
+      const filter = $(this).val().toLowerCase();
+      $('.destination-card').each(function() {
+        const name = $(this).data('name').toLowerCase();
+        $(this).toggle(name.includes(filter));
+      });
+    });
+
+    // Booking modal functionality
+    let selectedDest = '';
+    $('.book-btn').click(function() {
+      selectedDest = $(this).data('destination');
+      $('#selectedDestination').text(selectedDest);
+      $('#selectedDate').text($('#travelDate').val() || 'Not selected');
+      $('#selectedBudget').text($('#budget').val());
+      const modal = new bootstrap.Modal(document.getElementById('bookingModal'));
+      modal.show();
+    });
+
+    // Confirmation
+    $('#confirmBooking').click(function() {
+      alert('✅ Booking confirmed for ' + selectedDest + '!');
+      $('#bookingModal').modal('hide');
+    });
+  </script>
+
+</body>
+</html>

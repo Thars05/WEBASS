@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Dashboard</title>
+
+  <!-- Bootstrap & jQuery -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    /* ============ THEME VARIABLES ============ */
+    :root {
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --accent: #0d6efd;
+    }
+
+    html.dark {
+      --bg: #0b1220;
+      --card: #141b2d;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #60a5fa;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+    }
+
+    header {
+      background: var(--card);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      margin: 0;
+    }
+
+    #themeToggle {
+      border-radius: 20px;
+    }
+
+    .container-fluid {
+      padding-top: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      color: var(--text);
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    #sidebar {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    footer {
+      background: var(--card);
+      text-align: center;
+      padding: 10px;
+      margin-top: 30px;
+      color: var(--muted);
+    }
+
+    /* ============ MEDIA QUERIES ============ */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 1rem;
+      }
+      #sidebar {
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ============ HEADER ============ -->
+  <header>
+    <h1>Employee Performance Dashboard</h1>
+    <div class="d-flex gap-2 align-items-center">
+      <input type="search" id="searchInput" class="form-control form-control-sm" placeholder="Search employee..." />
+      <button id="themeToggle" class="btn btn-outline-primary btn-sm">Dark</button>
+    </div>
+  </header>
+
+  <!-- ============ MAIN CONTENT ============ -->
+  <div class="container-fluid">
+    <div class="row">
+      <!-- SIDEBAR FILTERS -->
+      <aside id="sidebar" class="col-12 col-md-3 p-3">
+        <h6 class="mb-3">Filters</h6>
+        <label class="form-label small">Team</label>
+        <select id="teamFilter" class="form-select mb-3">
+          <option value="">All Teams</option>
+          <option>Engineering</option>
+          <option>Sales</option>
+          <option>Design</option>
+        </select>
+
+        <label class="form-label small">Minimum Performance</label>
+        <input type="range" id="minPerf" min="0" max="100" value="0" class="form-range" />
+        <div class="small text-muted" id="perfLabel">0%</div>
+      </aside>
+
+      <!-- MAIN DASHBOARD AREA -->
+      <main class="col-12 col-md-9">
+        <section id="summary" class="mb-4">
+          <div class="row g-3">
+            <div class="col-6 col-lg-3">
+              <div class="card p-3 text-center">
+                <div class="small text-muted">Active Employees</div>
+                <div class="h4 mb-0" id="activeCount">0</div>
+              </div>
+            </div>
+            <div class="col-6 col-lg-3">
+              <div class="card p-3 text-center">
+                <div class="small text-muted">Average Performance</div>
+                <div class="h4 mb-0" id="avgPerf">0%</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- EMPLOYEE CARDS -->
+        <section id="employeeGrid">
+          <div class="row" id="cardsContainer"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    © 2025 Company Dashboard | Designed by Tharshiini R S
+  </footer>
+
+  <!-- ============ SCRIPT ============ -->
+  <script>
+    // ---------- SAMPLE DATA ----------
+    const employees = [
+      { id: 1, name: "Asha", team: "Engineering", role: "Developer", perf: 92 },
+      { id: 2, name: "Ravi", team: "Sales", role: "Sales Exec", perf: 75 },
+      { id: 3, name: "Meena", team: "Design", role: "UI Designer", perf: 68 },
+      { id: 4, name: "Karthik", team: "Engineering", role: "Tester", perf: 81 },
+      { id: 5, name: "Priya", team: "Sales", role: "Manager", perf: 88 },
+    ];
+
+    // ---------- THEME SWITCH ----------
+    const themeToggle = document.getElementById("themeToggle");
+    function setTheme(isDark) {
+      document.documentElement.classList.toggle("dark", isDark);
+      themeToggle.textContent = isDark ? "Light" : "Dark";
+      localStorage.setItem("dashboardTheme", isDark ? "dark" : "light");
+    }
+    themeToggle.addEventListener("click", () =>
+      setTheme(!document.documentElement.classList.contains("dark"))
+    );
+    setTheme(localStorage.getItem("dashboardTheme") === "dark");
+
+    // ---------- RENDER EMPLOYEES ----------
+    function renderEmployees(list) {
+      const container = document.getElementById("cardsContainer");
+      container.innerHTML = "";
+      list.forEach((emp) => {
+        const col = document.createElement("div");
+        col.className = "col-12 col-sm-6 col-lg-4 mb-3";
+        col.innerHTML = `
+          <div class="card p-3 h-100 employee-card">
+            <div class="d-flex justify-content-between">
+              <div>
+                <div class="fw-semibold">${emp.name}</div>
+                <div class="small text-muted">${emp.role} • ${emp.team}</div>
+              </div>
+              <div class="text-end">
+                <div class="small text-muted">Perf</div>
+                <div class="fw-bold">${emp.perf}%</div>
+              </div>
+            </div>
+            <div class="mt-2">
+              <div class="progress" style="height:10px;">
+                <div class="progress-bar" style="width:${emp.perf}%;" aria-valuenow="${emp.perf}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            <div class="more-details mt-2 small text-muted" style="display:none;">
+              Achievements and quarterly summary...
+            </div>
+          </div>`;
+        container.appendChild(col);
+      });
+      updateSummary(list);
+    }
+
+    // ---------- UPDATE SUMMARY ----------
+    function updateSummary(list) {
+      document.getElementById("activeCount").textContent = list.length;
+      const avg = list.length
+        ? Math.round(list.reduce((s, i) => s + i.perf, 0) / list.length)
+        : 0;
+      document.getElementById("avgPerf").textContent = avg + "%";
+    }
+
+    // ---------- FILTERS ----------
+    const teamFilter = document.getElementById("teamFilter");
+    const minPerf = document.getElementById("minPerf");
+    const searchInput = document.getElementById("searchInput");
+    const perfLabel = document.getElementById("perfLabel");
+
+    function applyFilters() {
+      const q = searchInput.value.toLowerCase();
+      const team = teamFilter.value;
+      const min = Number(minPerf.value);
+      perfLabel.textContent = min + "%";
+
+      const filtered = employees.filter((e) => {
+        if (team && e.team !== team) return false;
+        if (e.perf < min) return false;
+        if (
+          q &&
+          !(
+            e.name.toLowerCase().includes(q) ||
+            e.role.toLowerCase().includes(q)
+          )
+        )
+          return false;
+        return true;
+      });
+      renderEmployees(filtered);
+    }
+
+    [teamFilter, minPerf, searchInput].forEach((el) =>
+      el.addEventListener("input", applyFilters)
+    );
+
+    // ---------- INITIAL RENDER ----------
+    renderEmployees(employees);
+
+    // ---------- jQuery INTERACTIONS ----------
+    $(function () {
+      // Expand / collapse details smoothly
+      $("#cardsContainer").on("click", ".employee-card", function () {
+        $(this).find(".more-details").slideToggle(200);
+        $(this).toggleClass("expanded");
+      });
+    });
+  </script>
+</body>
+</html>

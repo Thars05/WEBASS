@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technical Symposium - Event Registration Portal</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style>
+    /* ======== BASIC PAGE STYLING ======== */
+    body {
+      background: linear-gradient(to right, #e3f2fd, #f1f8e9);
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #0d6efd;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      border-radius: 0 0 20px 20px;
+    }
+
+    .container {
+      margin-top: 30px;
+      max-width: 800px;
+      background-color: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    input, select, textarea {
+      border-radius: 10px !important;
+    }
+
+    .preview {
+      margin-top: 30px;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 15px;
+      background-color: #0d6efd;
+      color: white;
+      border-radius: 20px 20px 0 0;
+    }
+
+    /* ======== RESPONSIVE DESIGN ======== */
+    @media (max-width: 600px) {
+      header h1 { font-size: 22px; }
+      .container { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Technical Symposium 2025</h1>
+    <p>Online Event Registration Portal</p>
+  </header>
+
+  <div class="container">
+    <h3 class="text-center mb-4">Participant Registration Form</h3>
+    <form id="registrationForm">
+
+      <!-- Full Name -->
+      <div class="mb-3">
+        <label for="name" class="form-label">Full Name:</label>
+        <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" required>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label for="email" class="form-label">Email Address:</label>
+        <input type="email" id="email" name="email" class="form-control" placeholder="e.g., user@gmail.com" required>
+      </div>
+
+      <!-- Contact Number -->
+      <div class="mb-3">
+        <label for="phone" class="form-label">Contact Number:</label>
+        <input type="tel" id="phone" name="phone" class="form-control" pattern="[0-9]{10}" placeholder="10-digit mobile number" required>
+      </div>
+
+      <!-- College Name (with datalist for auto-suggestions) -->
+      <div class="mb-3">
+        <label for="college" class="form-label">College Name:</label>
+        <input list="colleges" id="college" name="college" class="form-control" placeholder="Select or type your college" required>
+        <datalist id="colleges">
+          <option value="Anna University">
+          <option value="IIT Madras">
+          <option value="NIT Trichy">
+          <option value="PSG College of Technology">
+          <option value="VIT Vellore">
+        </datalist>
+      </div>
+
+      <!-- Event Selection -->
+      <div class="mb-3">
+        <label for="event" class="form-label">Select Event:</label>
+        <select id="event" name="event" class="form-select" required>
+          <option value="">-- Choose an Event --</option>
+          <option value="Coding Challenge">Coding Challenge</option>
+          <option value="Paper Presentation">Paper Presentation</option>
+          <option value="Tech Quiz">Tech Quiz</option>
+          <option value="Robotics">Robotics</option>
+        </select>
+      </div>
+
+      <!-- Gender -->
+      <div class="mb-3">
+        <label class="form-label">Gender:</label><br>
+        <input type="radio" name="gender" value="Male" required> Male
+        <input type="radio" name="gender" value="Female" required> Female
+        <input type="radio" name="gender" value="Other" required> Other
+      </div>
+
+      <!-- Additional Comments -->
+      <div class="mb-3">
+        <label for="comments" class="form-label">Comments:</label>
+        <textarea id="comments" name="comments" class="form-control" rows="3" placeholder="Any additional info..."></textarea>
+      </div>
+
+      <!-- Submit -->
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary px-4">Submit</button>
+      </div>
+    </form>
+
+    <!-- Preview Section -->
+    <div class="preview" id="previewSection">
+      <h5>🧾 Registration Preview</h5>
+      <p><strong>Name:</strong> <span id="p_name"></span></p>
+      <p><strong>Email:</strong> <span id="p_email"></span></p>
+      <p><strong>Phone:</strong> <span id="p_phone"></span></p>
+      <p><strong>College:</strong> <span id="p_college"></span></p>
+      <p><strong>Event:</strong> <span id="p_event"></span></p>
+      <p><strong>Gender:</strong> <span id="p_gender"></span></p>
+      <p><strong>Comments:</strong> <span id="p_comments"></span></p>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Technical Symposium | Developed by Tharshiini R S</p>
+  </footer>
+
+  <!-- JavaScript & jQuery for Validation and Dynamic Preview -->
+  <script>
+    $(document).ready(function() {
+      // Highlight input field on focus
+      $('input, textarea').focus(function() {
+        $(this).css('background-color', '#e3f2fd');
+      }).blur(function() {
+        $(this).css('background-color', 'white');
+      });
+
+      // Form submission event
+      $('#registrationForm').submit(function(e) {
+        e.preventDefault();
+
+        // Simple validation
+        let valid = true;
+        $('input[required], select[required]').each(function() {
+          if ($(this).val() === '') valid = false;
+        });
+
+        if (!valid) {
+          alert('⚠️ Please fill all required fields correctly.');
+          return;
+        }
+
+        // Display preview before submission
+        $('#p_name').text($('#name').val());
+        $('#p_email').text($('#email').val());
+        $('#p_phone').text($('#phone').val());
+        $('#p_college').text($('#college').val());
+        $('#p_event').text($('#event').val());
+        $('#p_gender').text($('input[name="gender"]:checked').val());
+        $('#p_comments').text($('#comments').val());
+
+        $('#previewSection').slideDown(500);
+      });
+    });
+  </script>
+
+</body>
+</html>

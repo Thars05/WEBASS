@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>E‑Learning Portal — Homepage</title>
+  <!-- Bootstrap CSS (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- jQuery (CDN) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <!-- Bootstrap JS (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    /* ---------- Base & Layout ---------- */
+    :root{
+      --accent:#4f46e5; /* indigo-ish */
+      --muted:#6b7280;
+      --card-bg: #ffffff;
+      --page-bg: #f8fafc;
+    }
+    html,body{height:100%;}
+    body{
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--page-bg);
+      color:#111827;
+      margin:0; padding:0;
+    }
+
+    /* ---------- Header & Nav ---------- */
+    header.site-header{background:linear-gradient(90deg, rgba(79,70,229,0.06), rgba(79,70,229,0.02));}
+    .brand {font-weight:700; color:var(--accent);}
+
+    /* ---------- Featured sliding area (jQuery slide) ---------- */
+    .featured-wrap{overflow:hidden; position:relative;}
+    .featured-track{
+      display:flex;
+      gap:1rem;
+      transition:transform 400ms ease;
+      padding:1rem 0;
+    }
+    .featured-card{
+      min-width:280px;
+      flex:0 0 280px;
+      background:var(--card-bg);
+      border-radius:10px;
+      box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+      padding:1rem;
+    }
+
+    /* ---------- Course Cards grid ---------- */
+    .course-card{
+      background:linear-gradient(180deg, #fff 0%, #fbfdff 100%);
+      border-radius:12px;
+      padding:1rem;
+      height:100%;
+      display:flex; flex-direction:column;
+      transition:transform .22s ease, box-shadow .22s ease;
+      border:1px solid rgba(15,23,42,0.03);
+    }
+    /* Hover effect using box-model & transitions */
+    .course-card:hover{
+      transform:translateY(-6px) scale(1.01);
+      box-shadow: 0 14px 40px rgba(15,23,42,0.12);
+      z-index:5;
+    }
+
+    .course-thumb{height:140px; border-radius:8px; object-fit:cover; width:100%;}
+    .meta{color:var(--muted); font-size:0.9rem}
+
+    /* ---------- Login Form (modal fallback + inline errors) ---------- */
+    .form-error{color:#b91c1c; font-size:.85rem; display:none}
+
+    /* ---------- Footer ---------- */
+    footer.site-footer{background:#fff; border-top:1px solid rgba(15,23,42,0.04);}
+
+    /* Responsive tweaks */
+    @media (max-width:576px){
+      .featured-track{gap:.75rem}
+      .featured-card{min-width:220px; flex:0 0 220px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== Header (semantic) ========== -->
+  <header class="site-header">
+    <nav class="navbar navbar-expand-lg navbar-light container py-3">
+      <a class="navbar-brand brand" href="#">LearnLex</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="topicsDropdown" role="button" data-bs-toggle="dropdown">Topics</a>
+            <ul class="dropdown-menu" aria-labelledby="topicsDropdown">
+              <li><a class="dropdown-item" href="#">Web Dev</a></li>
+              <li><a class="dropdown-item" href="#">Data Science</a></li>
+              <li><a class="dropdown-item" href="#">Design</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-primary" id="openLogin">Log in</button>
+          <button class="btn btn-primary">Sign up</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ========== Hero ========== -->
+    <section class="py-5 container">
+      <div class="row align-items-center">
+        <div class="col-lg-7">
+          <h1 class="display-6">Learn skills that move your career forward</h1>
+          <p class="lead text-muted">Interactive courses, expert instructors, practical projects — learn at your own pace.</p>
+
+          <div class="d-flex gap-2 mt-3">
+            <a class="btn btn-primary btn-lg" href="#courses">Browse Courses</a>
+            <a class="btn btn-link" href="#">How it works</a>
+          </div>
+        </div>
+        <div class="col-lg-5 d-none d-lg-block">
+          <img src="https://images.unsplash.com/photo-1584697964190-3b6b3e2d6b2d?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="learning" class="img-fluid rounded-3 shadow-sm">
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== Featured (jQuery sliding track) ========== -->
+    <section class="container mb-5">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <h2 class="h5">Featured courses</h2>
+        <div class="d-flex gap-2 align-items-center">
+          <small class="text-muted">Handpicked for you</small>
+          <div>
+            <button class="btn btn-sm btn-outline-secondary" id="featPrev">‹</button>
+            <button class="btn btn-sm btn-outline-secondary" id="featNext">›</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="featured-wrap">
+        <div class="featured-track" id="featuredTrack">
+          <!-- Repeat featured-card elements -->
+          <article class="featured-card">
+            <img class="course-thumb mb-2" src="https://images.unsplash.com/photo-1584697964190-3b6b3e2d6b2d?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Course A">
+            <h5 class="mb-1">Fullstack Web Development</h5>
+            <p class="meta">by Jane Doe • 12h • Intermediate</p>
+          </article>
+
+          <article class="featured-card">
+            <img class="course-thumb mb-2" src="https://images.unsplash.com/photo-1526378720228-1b4d0a3f9f47?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Course B">
+            <h5 class="mb-1">Data Science with Python</h5>
+            <p class="meta">by DataLab • 18h • Beginner</p>
+          </article>
+
+          <article class="featured-card">
+            <img class="course-thumb mb-2" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Course C">
+            <h5 class="mb-1">UI/UX Design Essentials</h5>
+            <p class="meta">by DesignPro • 6h • Beginner</p>
+          </article>
+
+          <article class="featured-card">
+            <img class="course-thumb mb-2" src="https://images.unsplash.com/photo-1555949963-aa79dcee981d?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Course D">
+            <h5 class="mb-1">Cloud Fundamentals</h5>
+            <p class="meta">by CloudCorp • 9h • Intermediate</p>
+          </article>
+
+          <article class="featured-card">
+            <img class="course-thumb mb-2" src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Course E">
+            <h5 class="mb-1">Machine Learning Intro</h5>
+            <p class="meta">by MLWorks • 16h • Advanced</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== Courses grid (Bootstrap grid + semantic article tags) ========== -->
+    <section id="courses" class="container mb-5">
+      <div class="d-flex justify-content-between align-items-end mb-3">
+        <div>
+          <h2 class="h4 mb-0">Popular courses</h2>
+          <small class="text-muted">Updated weekly</small>
+        </div>
+
+        <!-- Example filter using Bootstrap dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" id="sortDropdown" data-bs-toggle="dropdown">Sort</button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+            <li><a class="dropdown-item" href="#">Most popular</a></li>
+            <li><a class="dropdown-item" href="#">Newest</a></li>
+            <li><a class="dropdown-item" href="#">Shortest</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <!-- card 1 -->
+        <article class="col-12 col-md-6 col-lg-4">
+          <div class="course-card p-3 h-100">
+            <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="HTML Course" class="course-thumb mb-3">
+            <h5>HTML & CSS Basics</h5>
+            <p class="meta">Beginner • 8 lessons</p>
+            <div class="mt-3 ms-auto">
+              <button class="btn btn-sm btn-outline-primary enrollBtn">Enroll</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- card 2 -->
+        <article class="col-12 col-md-6 col-lg-4">
+          <div class="course-card p-3 h-100">
+            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="JS Course" class="course-thumb mb-3">
+            <h5>JavaScript Essentials</h5>
+            <p class="meta">Intermediate • 10 lessons</p>
+            <div class="mt-3 ms-auto">
+              <button class="btn btn-sm btn-outline-primary enrollBtn">Enroll</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- card 3 -->
+        <article class="col-12 col-md-6 col-lg-4">
+          <div class="course-card p-3 h-100">
+            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Data Course" class="course-thumb mb-3">
+            <h5>Intro to Data Analysis</h5>
+            <p class="meta">Beginner • 7 lessons</p>
+            <div class="mt-3 ms-auto">
+              <button class="btn btn-sm btn-outline-primary enrollBtn">Enroll</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Additional cards can be duplicated similarly -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== Footer ========== -->
+  <footer class="site-footer py-4">
+    <div class="container d-flex justify-content-between align-items-center">
+      <small class="text-muted">© 2025 LearnLex — All rights reserved</small>
+      <div>
+        <a class="me-3 text-decoration-none" href="#">Terms</a>
+        <a class="text-decoration-none" href="#">Privacy</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== Login Modal (semantic form inside) ========== -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Log in</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="loginForm" novalidate>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="email" class="form-control" required>
+              <div class="form-error" id="emailError">Please enter a valid email.</div>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" id="password" class="form-control" minlength="6" required>
+              <div class="form-error" id="pwdError">Password must be at least 6 characters.</div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="remember">
+                <label class="form-check-label" for="remember">Remember me</label>
+              </div>
+              <button type="submit" class="btn btn-primary">Log in</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- JavaScript (vanilla) - handle login form ----------
+    document.getElementById('openLogin').addEventListener('click', function(){
+      var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+      loginModal.show();
+    });
+
+    // Simple form validation and error display
+    document.getElementById('loginForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = document.getElementById('email');
+      var pwd = document.getElementById('password');
+      var valid = true;
+
+      // Reset
+      document.getElementById('emailError').style.display = 'none';
+      document.getElementById('pwdError').style.display = 'none';
+
+      // Email check
+      var emailVal = email.value.trim();
+      if(!emailVal || !/^\S+@\S+\.\S+$/.test(emailVal)){
+        document.getElementById('emailError').style.display = 'block';
+        valid = false;
+      }
+
+      // Password check
+      if(!pwd.value || pwd.value.length < 6){
+        document.getElementById('pwdError').style.display = 'block';
+        valid = false;
+      }
+
+      if(!valid) return;
+
+      // If valid: simulate submit (replace with real POST/fetch)
+      // Show a temporary success UI then hide modal
+      var modalEl = document.getElementById('loginModal');
+      var modal = bootstrap.Modal.getInstance(modalEl);
+      // (simulate server call)
+      setTimeout(function(){
+        modal.hide();
+        // show a toast, or navigate to dashboard
+        alert('Login successful (simulated).');
+      }, 600);
+    });
+
+    // ---------- jQuery for featured sliding track and simple animations ----------
+    $(function(){
+      var $track = $('#featuredTrack');
+      var cardW = $('.featured-card').outerWidth(true);
+      var visibleWidth = $('.featured-wrap').width();
+      var trackPos = 0; // current translateX (negative)
+
+      function updateCardWidth(){
+        cardW = $('.featured-card').outerWidth(true);
+        visibleWidth = $('.featured-wrap').width();
+      }
+
+      // Next / Prev
+      $('#featNext').on('click', function(){
+        updateCardWidth();
+        var maxShift = Math.max(0, $track[0].scrollWidth - visibleWidth);
+        trackPos = Math.min(trackPos + cardW, maxShift);
+        $track.css('transform', 'translateX(' + -trackPos + 'px)');
+      });
+      $('#featPrev').on('click', function(){
+        updateCardWidth();
+        trackPos = Math.max(0, trackPos - cardW);
+        $track.css('transform', 'translateX(' + -trackPos + 'px)');
+      });
+
+      // Auto-slide (gentle) using jQuery animate for a nicer effect
+      var autoSlideInterval = setInterval(function(){
+        // slide a card width forward; if at end, return to start
+        updateCardWidth();
+        var maxShift = Math.max(0, $track[0].scrollWidth - visibleWidth);
+        if(trackPos + cardW >= maxShift){
+          // go to start
+          trackPos = 0;
+        } else {
+          trackPos = trackPos + cardW;
+        }
+        $track.css('transform', 'translateX(' + -trackPos + 'px)');
+      }, 4500);
+
+      // pause auto-slide when user hovers
+      $('.featured-wrap').hover(function(){ clearInterval(autoSlideInterval); }, function(){
+        autoSlideInterval = setInterval(function(){
+          updateCardWidth();
+          var maxShift = Math.max(0, $track[0].scrollWidth - visibleWidth);
+          if(trackPos + cardW >= maxShift){ trackPos = 0; } else { trackPos = trackPos + cardW; }
+          $track.css('transform', 'translateX(' + -trackPos + 'px)');
+        }, 4500);
+      });
+
+      // small jQuery animation when clicking enroll
+      $('.enrollBtn').on('click', function(){
+        var $btn = $(this);
+        $btn.prop('disabled', true).text('Processing...');
+        // simulate a quick animation/feedback
+        setTimeout(function(){
+          $btn.removeClass('btn-outline-primary').addClass('btn-success').text('Enrolled');
+        }, 800);
+      });
+
+      // Recalculate on resize
+      $(window).on('resize', function(){ updateCardWidth(); });
+    });
+
+    // ---------- Accessibility: enable keyboard trigger for login button ----------
+    document.getElementById('openLogin').addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' ') this.click();
+    });
+  </script>
+</body>
+</html>
